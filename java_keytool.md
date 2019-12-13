@@ -184,3 +184,149 @@ keytool -changealias -alias domain -destalias newdomain \
 ```
 
 You will be prompted for the keystore password.
+
+## CACERTS
+The `cacerts` file represents a system-wide keystore with CA
+certificates. System administrators can configure and manage that
+file using keytool, specifying `jks` as the keystore type. The
+`cacerts` keystore file ships with several root CA certificates. The
+initial password of the `cacerts` keystore file is `changeit`.
+System administrators should change that password and the default
+access permission of that file when installing the SDK.
+
+**Important**
+Verify your `cacerts` file. Since you trust the CAs in the
+`cacerts` file as entities for signing and issuing certificates
+to ther entities, you must manage the `cacerts` file carefully.
+The `cacerts` file should contain only certificates of the CAs you
+trust. It is your responsibility to verify the trusted root CA
+certificates bundled in the `cacerts` file and make your own
+trust decisions. To remove an untrusted CA certificate from the
+`cacerts` file, use the `delete` option of the keytool command.
+
+## Difference between a Java Keystore and a Truststore
+In most cases, we use a keystore and a truststore when our
+application needs to communicate over SSL/TLS. Usually, these
+are password-protected files that sit on the same file as our
+running application. The default format used for these files is
+JKS until Java 8.
+
+Since Java 9, though, the default keystore format is PKCS12. The
+biggest difference between JKS and PKCS12 is that JKS is a format
+specific to Java, while PKCS12 is a standardized and language-
+neutral way of storing encrypted private keys and certificates.
+
+### Java KeyStore
+A Java keystore stores private key entries, certificates with
+public keys or just secret keys that we may use for various
+cryptographic purposes. It stores each by an alias for ease of
+lookup.
+
+Generally speaking, keystores hold keys that our application owns
+that we can use to prove the integrity of a message and the
+authenticity of the sender, say by signing payloads.
+
+Usually, we'll use a keystore when we are a server and want to use
+HTTPS. During an SSL handshake, the server looks up the private key
+from the keystore and presents its corresponding public key and
+certificate to the client.
+
+Correspondingly, if the client also needs to authenticate
+itself--a situation called mutual authentication--then the client
+also has a keystore and also presents its public key and
+certificate.
+
+There's no default keystore, so if we want to use an encrypted
+channel, we'll have to set `javax.net.ssl.keyStore` and
+`javax.net.ssl.keyStorePassword`. If our keystore format is 
+different than the default, we could use 
+`javax.net.ssl.keyStoreType` to customize it.
+
+Of course, we can use these keys to service other needs as well.
+Private keys can sign or decrypt data, and public keys can verify
+or encrypt data. Secret keys can perform these functions as well.
+A keystore is a place that we can hold onto these keys.
+
+We can also interact with the keystore programmatically.
+
+### Java TrustStore
+A truststore is the opposite--while a keystore typically holds
+onto certificates that identify us, a truststore holds onto
+certificates that identify others.
+
+In Java, we use it to trust the third party we're about to
+communicate with. Take our earlier example, if a client talks to
+a Java-based server over HTTPS, the server will look up the
+associated key from its keystore and present the public key and
+certificate to the client.
+
+We, the client, then look up the associated certificate in our
+truststore. If the certificate or Certificate Authorities
+presented by the external server is not in our truststore, we'll
+get an `SSLHandshakeException` and the connection won't be set up
+successfully.
+
+Java has bundled a truststore called `cacerts` and it resides in
+the `$JAVA_HOME/jre/lib/security` directory.
+
+It contains default, trusted Certificate Authorities:
+
+```bash
+$ keytool -list -keystore cacerts
+Enter keystore password
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 92 entries
+
+verisignclass2g2ca [jdk], 2018-06-13, trustedCertEntry,
+Certificate fingerprint (SHA1): B3:EA:C4:47:76:C9:C8:1C:EA:F2:9D:95:B6:CC:A0:08:1B:67:EC:9D
+```
+
+We see here that the truststore contains 92 trusted certificate
+entries and one of the entries is the *verisignclass2gca* entry.
+This means that the JVM will automatically trust certificates
+signed by *verisignclass2gca*.
+
+Here, we can override the default truststore location via the
+`javax.net.ssl.trustStore` property. Similarly, we can set
+`javax.net.ssl.trustStorePassword` and 
+`javax.net.ssl.trustStoreType` to specify the truststore's
+password and type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
