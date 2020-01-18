@@ -93,6 +93,15 @@ prompt for the keystore password (new or existing), followed by a
 Distinguished Name prompt (for the private key), then the desired
 private key password.
 
+### -gencert
+Generates a certificate as a response to a certificate request file
+(which can be created by the `keytool -certreq` command). The
+command reads the request from *infile* (if omitted, from the
+standard input), signs it using alias's private key, and output the
+X.509 certificate into *outfile* (if omitted, to the standard
+output). If -rfc is specified, output format is BASE64-encoded PEM;
+otherwise, a binary DER is created.
+
 ## View Keystore Entries
 
 ### List Keystore Certificate Fingerprints
@@ -272,7 +281,7 @@ the `$JAVA_HOME/jre/lib/security` directory.
 It contains default, trusted Certificate Authorities:
 
 ```bash
-$ keytool -list -keystore cacerts
+$ keytool -list -cacerts
 Enter keystore password
 Keystore type: JKS
 Keystore provider: SUN

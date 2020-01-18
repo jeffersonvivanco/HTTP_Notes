@@ -97,14 +97,14 @@ good until it expires.
 
 ## Creating CA-Signed Certificates for your dev sites
 Now that we're a CA on all our devices, we can sign certificates
-for an new dev sites that need HTTPS. First, we create a private
+for any new dev sites that need HTTPS. First, we create a private
 key:
 
 `openssl genrsa -out dev.mergebot.com.key 2048`
 
 Then we create a CSR
 
-`openssl req -new -key dev.mergebot.com.ke -out dev.mergebot.com.csr`
+`openssl req -new -key dev.mergebot.com.key -out dev.mergebot.com.csr`
 
 You'll get the same questions as you did above and, again, your
 answers don't matter. In fact, they matter even less because you
