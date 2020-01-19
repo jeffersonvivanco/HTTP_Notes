@@ -89,7 +89,7 @@ all the devices in the world. Let's start with the ones you own.
 
 ## Installing your root certificate
 
-We need to ass the root certificate to any laptops, desktops,
+We need to add the root certificate to any laptops, desktops,
 tablets, and phones that will be accessing your HTTPS sites. This
 can be a bit of a pain, but the good news is that we only have to
 do it once. Once our root certificate is on each device, it will be
@@ -141,7 +141,7 @@ You should be prompted for your CA private key pass phrase
 I now have 3 files: dev.mergebot.com.key (the private key),
 dev.mergebot.com.csr (the certificate signing request), and
 dev.mergebot.com.crt (the signed certificate). I can now
-configure my web server with the private jey and the certificate.
+configure my web server with the private key and the certificate.
 For any other dev sites, we can just repeat this last part of
 creating a certificate. No need to install any new certificates on
 any of my devices. Much better.
