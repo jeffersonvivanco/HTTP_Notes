@@ -3,10 +3,11 @@
 to manipulate Java Keystores, and is included with Java. A *Java
 Keystore* is a container for authorization certificates or public
 key certificates, and is often used by Java-based applications for
-encryption, authentication, and serving over HTTPS. Its entries are
-protected by a keystore password. A keystore entry is identified by
-an *alias* and it consists of keys and certificates that form a
-trust chain.
+encryption, authentication, and serving over HTTPS. A keystore is a
+password protected file often with JKS extension. Keystore is not a
+digital certificate. Its entries are protected by a keystore
+password. A keystore entry is identified by an *alias* and it
+consists of keys and certificates that form a trust chain.
 
 ## Creating and Importing Keystore Entries
 
@@ -44,6 +45,10 @@ keytool -certreq -alias domain -file domain.csr \
 ```
 
 After entering the keystore's password, the CSR will be generated.
+The above command extracts required information such as public key,
+DN and put it in a standard CSR format in file domain.csr. A 
+commercial CA should verify all information before they can issue a
+certificate with their signature.
 
 ### Import Signed/Root/Intermediate Certificate
 Use this method if you want to import a signed certificate, e.g.
@@ -83,8 +88,8 @@ under the specified alias (`domain`), in the specified keystore file
 (`keystore.jks`):
 
 ```bash
-keytool -genkey -alias domain -keyalg RSA -validity 365 \
--keystore keystore.jks
+keytool -genkey -alias Deb -keyalg RSA -validity 365 \
+-keystore keystore.p12
 ```
 
 If the specified keystore does not already exist, it will be
@@ -92,6 +97,17 @@ created after the requested information is supplied. This will
 prompt for the keystore password (new or existing), followed by a
 Distinguished Name prompt (for the private key), then the desired
 private key password.
+
+So now `keystore.p12` has a private and public key. Keystore is not a
+digital certificate. It is a store to keep certificates and private
+keys. Now let us export a certificate containing the public key.
+**You cannot export the private key using keytool**. To extract the
+private key you need to use the Java Cryptography API. Use the
+following command to export the public key as a certificate.
+`keytool -export -alias Deb -file Deb.cer -keystore keystore.12`. Now
+`Deb.cer` is the certificate containting your public key. `Deb.cer`
+is a self-signed certificate. Its owner and Issuer have the same DN.
+This certificate is signed by the private key of Deb.
 
 ### -gencert
 Generates a certificate as a response to a certificate request file
