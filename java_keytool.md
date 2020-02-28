@@ -1,4 +1,5 @@
-# Java Keytool
+# Java Keytool - key and certificate management tool
+
 *Java Keytool* is a key and certificate management tool that is used
 to manipulate Java Keystores, and is included with Java. A *Java
 Keystore* is a container for authorization certificates or public
@@ -29,6 +30,19 @@ after the requested information is supplied. This will prompt for
 the keystore password (new or existing), followed by a Distinguished
 Name prompt (for the private key), then the desired private key
 password.
+
+options
+* `-keyalg` - key generation algorithm. Commonly it is either RSA
+  (mostly used) or DSA (default).
+* `-sigalg` - the signature algorithm.
+  * ex: `-sigalg SHA1withRSA` - Here it says hash/digest the message
+    with SHA1 and then encrypt it using a RSA private key. If you do
+    not specify then keytool uses default key pair generation algorithm
+    as "DSA". The signature algorithm is derived from the algorithm of
+    the underlying private key: If the underlying private key is of type
+    "DSA", the default signature algorithm is "SHA1withDSA", and if the
+    underlying private key is of type "RSA", the default signature
+    algorithm is "MD5withRSA".
 
 ### Generate CSR for Existing Private Key
 Use this method if you want to generate a CSR (Certificate Signing 
@@ -101,8 +115,7 @@ private key password.
 So now `keystore.p12` has a private and public key. Keystore is not a
 digital certificate. It is a store to keep certificates and private
 keys. Now let us export a certificate containing the public key.
-**You cannot export the private key using keytool**. To extract the
-private key you need to use the Java Cryptography API. Use the
+**You cannot export the private key using keytool**. Use the
 following command to export the public key as a certificate.
 `keytool -export -alias Deb -file Deb.cer -keystore keystore.12`. Now
 `Deb.cer` is the certificate containting your public key. `Deb.cer`
@@ -131,6 +144,10 @@ keytool -list -keystore keystore.jks
 You will be prompted for the keystore's password. You may also
 restrict the output to a specific alias by using the
 `-alias domain` option, where "domain" is the alias name.
+
+Note that keytool will not print the private or the public
+key. But it tells that keystore has 1 entry and is of type
+PrivateKeyEntry.
 
 ### List Verbose Keystore Contents
 This command lists verbose information about the entries a
@@ -174,6 +191,8 @@ keytool -exportcert -alias domain -file domain.der \
 ```
 
 You will be prompted for the keystore password.
+**You cannot export the private key using keytool** To extract the
+private key you need to use the Java Cryptography API.
 
 ## Modifying Keystore
 
